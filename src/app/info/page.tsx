@@ -1,0 +1,143 @@
+import React from 'react';
+import Link from 'next/link';
+import { 
+  BarChart2, 
+  Calendar, 
+  Bell, 
+  MessageSquare, 
+  ArrowRight,
+  Info,
+  CreditCard,
+  UserCheck
+} from 'lucide-react';
+
+export default function InfoPublicPage() {
+  const features = [
+    {
+      title: 'Portal Nilai & KHS',
+      description: 'Pantau kemajuan akademik siswa secara real-time. Unduh KHS digital kapan saja.',
+      icon: <BarChart2 className="text-blue-500" />,
+      link: '/portal',
+      badge: 'Siswa & Wali'
+    },
+    {
+      title: 'Presensi Kehadiran',
+      description: 'Laporan kehadiran harian yang transparan dan otomatis terintegrasi ke orang tua.',
+      icon: <UserCheck className="text-emerald-500" />,
+      link: '/portal',
+      badge: 'Monitoring'
+    },
+    {
+      title: 'Administrasi & SPP',
+      description: 'Informasi tagihan dan riwayat pembayaran sekolah yang praktis dan akurat.',
+      icon: <CreditCard className="text-amber-500" />,
+      link: '/portal',
+      badge: 'Keuangan'
+    },
+    {
+      title: 'Bimbingan Konseling',
+      description: 'Layanan konsultasi psikologis dan akademik melalui sistem booking yang privat.',
+      icon: <MessageSquare className="text-indigo-500" />,
+      link: '/portal',
+      badge: 'Layanan'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="bg-slate-900 py-24 px-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl -mr-48 -mt-48"></div>
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+            Transparansi <span className="text-blue-500">&</span> Engagement
+          </h1>
+          <p className="text-slate-400 text-xl max-w-2xl mx-auto font-medium mb-10">
+            Membangun ekosistem pendidikan digital yang terbuka, akuntabel, dan memudahkan interaksi antara sekolah, siswa, serta orang tua.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/login" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all flex items-center gap-2">
+              Masuk ke Portal <ArrowRight size={20} />
+            </Link>
+            <Link href="/about" className="px-8 py-4 bg-white/10 text-white border border-white/10 rounded-2xl font-black text-lg hover:bg-white/20 transition-all">
+              Tentang Kami
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Info Sections */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((f, i) => (
+            <div key={i} className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:border-blue-200 transition-all group">
+              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                {f.icon}
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-4 inline-block">
+                {f.badge}
+              </span>
+              <h3 className="text-2xl font-black text-slate-900 mb-3">{f.title}</h3>
+              <p className="text-slate-500 font-bold text-sm leading-relaxed mb-6">{f.description}</p>
+              <Link href={f.link} className="text-sm font-black text-slate-900 flex items-center gap-2 hover:text-blue-600 transition-colors">
+                Selengkapnya <ArrowRight size={16} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Public Pages Links */}
+      <section className="bg-slate-50 py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl font-black text-slate-900 mb-4">Informasi Publik</h2>
+              <p className="text-slate-500 font-bold">Akses cepat ke informasi umum sekolah yang dapat diakses tanpa login.</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <Link href="/info/jadwal" className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all">
+              <Calendar className="text-amber-500 mb-6" size={40} />
+              <h3 className="text-2xl font-black text-slate-900 mb-4">Jadwal Sekolah</h3>
+              <p className="text-slate-500 font-bold text-sm mb-6">Kalender akademik, jadwal ujian, dan agenda kegiatan sekolah setahun penuh.</p>
+              <span className="text-blue-600 font-black text-xs uppercase tracking-widest flex items-center gap-2">Buka Halaman <ArrowRight size={14}/></span>
+            </Link>
+
+            <Link href="/info/pengumuman" className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all">
+              <Bell className="text-red-500 mb-6" size={40} />
+              <h3 className="text-2xl font-black text-slate-900 mb-4">Pengumuman Resmi</h3>
+              <p className="text-slate-500 font-bold text-sm mb-6">Informasi terbaru, kebijakan sekolah, dan berita mendesak untuk publik.</p>
+              <span className="text-blue-600 font-black text-xs uppercase tracking-widest flex items-center gap-2">Buka Halaman <ArrowRight size={14}/></span>
+            </Link>
+
+            <Link href="/info/faq" className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all">
+              <Info className="text-blue-500 mb-6" size={40} />
+              <h3 className="text-2xl font-black text-slate-900 mb-4">Panduan Portal</h3>
+              <p className="text-slate-500 font-bold text-sm mb-6">Tanya jawab seputar penggunaan portal siswa dan wali untuk pengguna baru.</p>
+              <span className="text-blue-600 font-black text-xs uppercase tracking-widest flex items-center gap-2">Buka Halaman <ArrowRight size={14}/></span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-6 text-center">
+        <div className="max-w-4xl mx-auto bg-blue-600 rounded-[4rem] p-12 md:p-20 relative overflow-hidden shadow-2xl shadow-blue-200">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+           <h2 className="text-4xl md:text-5xl font-black text-white mb-8 relative z-10">Siap untuk Memulai Masa Depan?</h2>
+           <p className="text-blue-100 text-lg font-medium mb-12 relative z-10">Dapatkan akses penuh ke seluruh layanan pendidikan digital kami sekarang.</p>
+           <div className="flex flex-wrap justify-center gap-4 relative z-10">
+              <Link href="/login" className="px-10 py-5 bg-white text-blue-600 rounded-3xl font-black text-xl hover:scale-105 transition-all shadow-xl">
+                Login ke Portal
+              </Link>
+              <Link href="/contact" className="px-10 py-5 bg-blue-700 text-white rounded-3xl font-black text-xl hover:bg-blue-800 transition-all">
+                Hubungi Admin
+              </Link>
+           </div>
+        </div>
+      </section>
+    </div>
+  );
+}

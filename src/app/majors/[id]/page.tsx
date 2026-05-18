@@ -1,11 +1,11 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/Navbar';
-import { 
-  Network, 
-  Calculator, 
-  Megaphone, 
-  Brain, 
+import {
+  Network,
+  Calculator,
+  Megaphone,
+  Brain,
   Database,
   GraduationCap,
   ArrowRight,
@@ -80,13 +80,14 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-40 pb-20 px-6 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-[10px] font-black uppercas
+e tracking-widest mb-6">
                 <Icon size={14} />
                 <span>Program Keahlian {major.category}</span>
               </div>
@@ -97,23 +98,25 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
                 {major.description}
               </p>
               <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all flex items-center gap-2">
+                <button className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all flex items-center
+ gap-2">
                   Daftar Sekarang
                   <ArrowRight size={18} />
                 </button>
                 {major.curriculums[0] && (
-                  <button className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-2xl font-black hover:border-blue-600 transition-all">
+                  <button className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-2xl font-black hover:border-blue-600
+ transition-all">
                     Download Kurikulum
                   </button>
                 )}
               </div>
             </div>
             <div className="w-full md:w-2/5 aspect-square relative flex items-center justify-center">
-              <Image 
-                src={majorImage} 
-                alt={major.name} 
-                fill 
-                className={isLogo ? "object-contain p-8" : "object-cover rounded-[3rem] group-hover:scale-110 transition-transform duration-1000"}
+              <Image
+                src={majorImage}
+                alt={major.name}
+                fill
+                className={isLogo ? "object-contain p-8" : "object-cover rounded-[3rem] group-hover:scale-110 transition-transform duration-1000"}     
               />
               {!isLogo && (
                 <>
@@ -150,7 +153,7 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
             <Globe className="text-emerald-500 mb-6 group-hover:rotate-12 transition-transform" size={40} />
             <h3 className="text-2xl font-black text-slate-900 mb-4">Sertifikasi Global</h3>
             <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              Kurikulum terintegrasi dengan vendor raksasa teknologi (Google, AWS, Microsoft, Cisco) untuk menjamin kualitas lulusan.
+              Kurikulum terintegrasi dengan vendor raksasa teknologi (Google, AWS, Microsoft, Cisco) untuk menjamin kualitas lulusan.        
             </p>
             <div className="space-y-3">
               {['BNSP Certified', 'Vendor Recognized', 'Industry Aligned'].map(item => (
@@ -186,10 +189,10 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
           <div className="grid md:grid-cols-2 gap-8">
             {galleryImages.map((src, index) => (
               <div key={index} className="relative aspect-video rounded-[3rem] overflow-hidden shadow-lg group">
-                <Image 
-                  src={src} 
-                  alt={`${major.name} gallery image ${index + 1}`} 
-                  fill 
+                <Image
+                  src={src}
+                  alt={`${major.name} gallery image ${index + 1}`}
+                  fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>

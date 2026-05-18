@@ -63,8 +63,9 @@ export async function POST(request: Request) {
     
     // If it's a standard form post, redirect to the absolute URL based on the current host
     if (!contentType.includes('application/json')) {
-       const adminUrl = new URL('/admin', `${protocol}://${host}`);
-       return NextResponse.redirect(adminUrl.toString(), 303);
+       const redirectPath = user.role === 'STUDENT' ? '/portal' : '/admin';
+       const redirectUrl = new URL(redirectPath, `${protocol}://${host}`);
+       return NextResponse.redirect(redirectUrl.toString(), 303);
     }
 
     return NextResponse.json({ success: true });

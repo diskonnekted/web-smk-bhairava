@@ -1,8 +1,10 @@
-import { streamText } from 'ai';
+import { streamText, StreamTextResult } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+// import { getSchoolContext } from '@/lib/ai-context'; // Removed import
+import { CoreMessage } from 'ai';
 
 // Initialize the Groq client using @ai-sdk/openai
 const groq = createOpenAI({
@@ -10,28 +12,38 @@ const groq = createOpenAI({
   baseURL: 'https://api.groq.com/openai/v1', // Groq's API base URL
 });
 
+const getSchoolInfoParams = z.object({
+    query_type: z.enum(["majors", "news", "events", "teachers", "projects"]).describe("The type of information to retrieve."),
+    major_name: z.string().optional().describe("The name of the major to get details for, if any.")
+});
+
+type GetSchoolInfoParams = z.infer<typeof getSchoolInfoParams>;
+
 export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
+        // const schoolContext = await getSchoolContext(); // Removed call
+        const staticSchoolContext = `SMK Bhairava adalah Sekolah Menengah Kejuruan di Indonesia dengan fokus pada teknologi dan bisnis.`; // Static placeholder
 
-        const result = await streamText({
+        const result: StreamTextResult = await streamText({
             model: groq('llama3-8b-8192'),
-            messages,
+            messages: messages as CoreMessage[],
             system: `You are Bhairava AI, the official AI assistant for SMK Bhairava, a vocational high school in Indonesia.
 - Your tone is professional, helpful, and slightly enthusiastic.
-- You must answer questions based on the school's context using the tools provided.
-- If the user asks about majors, news, or events, use the 'get_school_info' tool.
+- Use the following school context as your primary source of truth:
+---
+${staticSchoolContext}
+---
+- If the user asks about majors, news, or events, prioritize the context provided above.
+- If you need more specific details not in the context, use the 'get_school_info' tool.
 - Do not answer questions outside of this context. If asked about unrelated topics, politely state that you are an assistant for SMK Bhairava and can only answer school-related questions.
 - All responses must be in Bahasa Indonesia.
-- When you use a tool, you will be given the data. Then, you must use that data to formulate your final answer to the user.`,
+- Maintain a modern, digital-first attitude consistent with a tech-focused school.`,
             tools: {
                 get_school_info: {
                     description: "Get information about the school's majors, latest news, or upcoming events.",
-                    parameters: z.object({
-                        query_type: z.enum(["majors", "news", "events"]).describe("The type of information to retrieve."),
-                        major_name: z.string().optional().describe("The name of the major to get details for, if any.")
-                    }),
-                    execute: async ({ query_type, major_name }: any) => {
+                    parameters: getSchoolInfoParams,
+                    execute: async ({ query_type, major_name }: GetSchoolInfoParams) => {
                         let tool_response_content = "";
 
                         if (query_type === 'majors') {
@@ -53,6 +65,12 @@ export async function POST(req: Request) {
                         } else if (query_type === 'events') {
                             const events = await prisma.event.findMany({ take: 3, orderBy: { startDate: 'asc' }, where: { startDate: { gte: new Date() } }, select: { title: true, startDate: true } });
                             tool_response_content = `Upcoming events: ${events.map(e => `${e.title} on ${e.startDate.toDateString()}`).join('. ')}`;
+                        } else if (query_type === 'teachers') {
+                            const teachers = await prisma.teacher.findMany({ take: 5, select: { name: true, subjects: true } });
+                            tool_response_content = `Some of our teachers: ${teachers.map(t => `${t.name} (teaches: ${t.subjects || 'General'})`).join(', ')}`;
+                        } else if (query_type === 'projects') {
+                            const projects = await prisma.project.findMany({ take: 3, include: { major: true }, select: { title: true, major: { select: { name: true } } } });
+                            tool_response_content = `Recent student projects: ${projects.map(p => `${p.title} (${p.major.name})`).join(', ')}`;
                         }
 
                         return tool_response_content;
@@ -60,11 +78,11 @@ export async function POST(req: Request) {
                 }
             },
             maxSteps: 5,
-        } as any);
+        });
 
-        return (result as any).toDataStreamResponse();
+        return result.toDataStreamResponse();
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Groq Chat API error:', error);
         return NextResponse.json({ error: 'Failed to connect to AI service.' }, { status: 500 });
     }

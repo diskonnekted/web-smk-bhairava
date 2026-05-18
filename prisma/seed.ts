@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
-const random = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+const random = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
 async function main() {
   console.log("--- Start seeding ---");
@@ -124,7 +124,7 @@ async function main() {
       }
     });
     
-    await prisma.student.create({
+    const student = await prisma.student.create({
       data: {
         name: `${studentNames[i]}`,
         nis: nis,
@@ -134,6 +134,71 @@ async function main() {
         userId: user.id,
       }
     });
+
+    // Seed data for the first 5 students
+    if (i < 5) {
+      // Attendance
+      for (let d = 0; d < 10; d++) {
+        const date = new Date();
+        date.setDate(date.getDate() - d);
+        await prisma.attendance.create({
+          data: {
+            studentId: student.id,
+            date: date,
+            status: d % 7 === 0 ? 'SAKIT' : 'HADIR',
+            note: d % 7 === 0 ? 'Izin sakit dengan surat' : 'Hadir tepat waktu'
+          }
+        });
+      }
+
+      // Fees
+      for (let m = 0; m < 3; m++) {
+        const dueDate = new Date();
+        dueDate.setMonth(dueDate.getMonth() + m);
+        await prisma.feePayment.create({
+          data: {
+            studentId: student.id,
+            amount: 500000,
+            dueDate: dueDate,
+            status: m === 0 ? 'PAID' : 'PENDING',
+            paidDate: m === 0 ? new Date() : null
+          }
+        });
+      }
+
+      // Grades
+      const teachers = await prisma.teacher.findMany(); // Fetch all teachers
+      const randomTeacher = teachers.length > 0 ? random(teachers) : null;
+
+      const subjects = ['Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Informatika'];
+      for (const subject of subjects) {
+        if (randomTeacher) {
+          await prisma.grade.create({
+            data: {
+              studentId: student.id,
+              teacherId: randomTeacher.id,
+              subject,
+              score: 75 + Math.floor(Math.random() * 20),
+              semester: 1,
+              academicYear: '2025/2026'
+            }
+          });
+        }
+      }
+
+      // Counseling
+      if (randomTeacher) {
+        await prisma.counselingSession.create({
+          data: {
+            studentId: student.id,
+            teacherId: randomTeacher.id,
+            date: new Date(),
+            topic: 'Konsultasi Karir & Minat',
+            status: 'BOOKED'
+          }
+        });
+      }
+    }
   }
   console.log("30 dummy students with user accounts created.");
   console.log("--- Seeding finished successfully ---");

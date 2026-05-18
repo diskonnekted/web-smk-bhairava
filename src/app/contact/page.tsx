@@ -6,7 +6,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      
+
       <section className="pt-40 pb-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20 items-start">
@@ -27,7 +27,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="flex gap-6 items-center">
-                  <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 flex-shrink-0">
+                  <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 flex-shrink-0">      
                     <Phone size={24} />
                   </div>
                   <div>
@@ -69,7 +69,7 @@ export default function ContactPage() {
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700 ml-1">Nama Lengkap</label>
                     <input type="text" className="w-full px-6 py-4 rounded-2xl bg-white border-transparent focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm" placeholder="John Doe" />
-                  </div>
+                 </div>
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700 ml-1">Email</label>
                     <input type="email" className="w-full px-6 py-4 rounded-2xl bg-white border-transparent focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm" placeholder="john@example.com" />
