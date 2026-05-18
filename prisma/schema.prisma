@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String
+  role      String    @default("ADMIN") // ADMIN, TEACHER, STUDENT
+  name      String
+  email     String?   @unique
+  createdAt DateTime  @default(now())
+  teacher   Teacher[]
+  student   Student[] // Relation to Student
+}
+
+model Teacher {
+  id       String    @id @default(cuid())
+  name     String
+  nuptk    String    @unique
+  userId   String?   @unique
+  user     User?     @relation(fields: [userId], references: [id])
+  gender   String
+  phone    String?
+  subjects String? // "Matematika,Fisika"
+  grades   Grade[]
+}
+
+model Major {
+  id          String       @id @default(cuid())
+  name        String @unique
+  description String
+  icon        String
+  category    String       @default("CORE") // CORE, TECH, BUSINESS
+  students    Student[]
+  curriculums Curriculum[]
+  projects    Project[]
+}
+
+model Student {
+  id            String       @id @default(cuid())
+  name          String
+  nis           String       @unique
+  nisn          String?      @unique
+  gender        String
+  religion      String?
+  placeOfBirth  String?
+  dateOfBirth   DateTime?
+  phone         String?
+  address       String?
+  majorId       String
+  major         Major        @relation(fields: [majorId], references: [id])
+  internships   Internship[]
+  grades        Grade[]
+  userId        String?      @unique // Link to User model for login
+  user          User?        @relation(fields: [userId], references: [id])
+}
+
+model Grade {
+  id           String   @id @default(cuid())
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id])
+  teacherId    String
+  teacher      Teacher  @relation(fields: [teacherId], references: [id])
+  subject      String
+  academicYear String   @default("2025/2026")
+  semester     Int      @default(1)
+  score        Int
+  createdAt    DateTime @default(now())
+}
+
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   @default("GENERAL") // ANNOUNCEMENT, EVENT, ACHIEVEMENT
+  image     String?
+  isDraft   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  type        String   @default("ACADEMIC") // ACADEMIC, HOLIDAY, EXAM, PKL
+}
+
+model Curriculum {
+  id      String  @id @default(cuid())
+  title   String
+  majorId String
+  major   Major   @relation(fields: [majorId], references: [id])
+  fileUrl String?
+  version String  @default("1.0")
+}
+
+model Internship {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  companyName String
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("ONGOING") // PLANNED, ONGOING, COMPLETED
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  majorId     String
+  major       Major   @relation(fields: [majorId], references: [id])
+  imageUrl    String?
+  link        String?
+}
