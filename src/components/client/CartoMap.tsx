@@ -14,6 +14,11 @@ export default function CartoMap() {
     import('leaflet').then((Leaflet) => {
       if (!mapRef.current) return;
 
+      // Check if map is already initialized on this element
+      if ((mapRef.current as any)._leaflet_id) {
+        return; 
+      }
+
       // Ensure CSS is loaded
       if (!document.getElementById('leaflet-css')) {
         const link = document.createElement('link');
@@ -58,9 +63,10 @@ export default function CartoMap() {
     return () => {
       if (mapInstance) {
         mapInstance.remove();
+        setMapInstance(null); // Clear the state to allow re-initialization if component remounts
       }
     };
-  }, []); 
+  }, [mapInstance]); // Add mapInstance to dependency array
 
   return (
     <div className="w-full h-full relative z-0">

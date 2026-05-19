@@ -95,7 +95,7 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
           <div className="lg:col-span-2 space-y-12">
             <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100">
               <h2 className="text-3xl font-black text-slate-900 mb-6">Tentang Program</h2>
-              <p className="text-slate-600 leading-relaxed text-lg mb-8">
+              <p className="text-slate-700 leading-relaxed text-lg mb-8">
                 Jurusan {majorName} di SMK Bhairava menyediakan akses ke lab virtual, simulasi industri, dan proyek kolaborasi langsung dengan mitra teknologi. Kurikulum Pro Version mencakup materi tingkat lanjut yang biasanya hanya tersedia di tingkat universitas atau training industri bersertifikat.
               </p>
               <div className="flex gap-4">
@@ -119,8 +119,11 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
                         <Image src={i === 1 ? "/making robot.jpeg" : "/merakit pc.jpeg"} alt="Proyek" fill sizes="40vw" className="object-cover" />
                       </div>
                       <div className="p-6">
-                         <h4 className="font-bold text-lg mb-2">Sistem Integrasi IoT {i}</h4>
-                         <p className="text-slate-500 text-sm">Implementasi perangkat lunak pada perangkat keras industri.</p>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-2 inline-block">Proyek</span>
+                         <h4 className="font-bold text-lg mb-2 text-slate-900">
+                           {i === 1 ? 'Sistem Integrasi IoT 1' : 'Sistem Integrasi IoT 2'}
+                         </h4>
+                         <p className="text-slate-700 text-sm">Implementasi perangkat lunak pada perangkat keras industri.</p>
                       </div>
                     </div>
                   ))}

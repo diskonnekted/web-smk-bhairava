@@ -95,15 +95,22 @@ model Event {
   endDate     DateTime
   location    String?
   type        String   @default("ACADEMIC") // ACADEMIC, HOLIDAY, EXAM, PKL
+  image       String? // New field for event cover image
 }
 
 model Curriculum {
-  id      String  @id @default(cuid())
-  title   String
-  majorId String
-  major   Major   @relation(fields: [majorId], references: [id])
-  fileUrl String?
-  version String  @default("1.0")
+  id              String   @id @default(cuid())
+  title           String
+  majorId         String
+  major           Major    @relation(fields: [majorId], references: [id])
+  fileUrl         String?
+  version         String   @default("1.0")
+  description     String? // New: Detailed description of the curriculum
+  category        String   @default("SILABUS") // New: CP, TP, ATP, Silabus, RPP
+  contentLink     String? // New: Link to external content (e.g., Google Drive)
+  status          String   @default("DRAFT") // New: DRAFT, PENDING, APPROVED, REJECTED
+  uploadedAt      DateTime @default(now())
+  lastUpdatedAt   DateTime @updatedAt
 }
 
 model Internship {

@@ -33,11 +33,6 @@ const iconMap: Record<string, any> = {
   Cpu,
 };
 
-// Map event titles to relevant images
-const eventImageMap: Record<string, string> = {
-  'Ujian Kompetensi Keahlian (UKK)': '/ujian kompetensi.jpeg',
-  'Pembekalan PKL Industri': '/praktik industri.jpeg',
-};
 
 async function getMajors() {
   return await prisma.major.findMany();
@@ -45,7 +40,7 @@ async function getMajors() {
 
 async function getEvents() {
   return await prisma.event.findMany({
-    take: 3,
+    take: 4,
     orderBy: { startDate: 'asc' }
   });
 }
@@ -169,25 +164,29 @@ export default async function LandingPage() {
                 alt="Making Robot"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover group-hover:scale-110 transition-all duration-700" 
+                className="object-cover group-hover:scale-110 transition-transform duration-700" 
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-8">
-                <p className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity">Robot Development Lab</p>
+                <p className="text-white font-bold text-lg opacity-100 transition-opacity">Robot Development Lab</p>
               </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group col-span-2 shadow-lg">
               <Image src="/merakit pc.jpeg" alt="Merakit PC" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-6">
-                <p className="text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">Hardware Engineering</p>
+                <p className="text-white font-bold text-sm opacity-100 transition-opacity">Hardware Engineering</p>
               </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group shadow-md">
               <Image src="/programming.jpeg" alt="Programming" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-6">
+                <p className="text-white font-bold text-sm opacity-100 transition-opacity">Programming & Software Dev</p>
+              </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group shadow-md">
-              <Image src="/profil siswa.jpeg" alt="Profil Siswa" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
+              <Image src="/profil siswa.jpeg" alt="Profil Siswa" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-6">
+                <p className="text-white font-bold text-sm opacity-100 transition-opacity">Pendidikan Karakter</p>
+              </div>
             </div>
           </div>
         </div>
@@ -328,7 +327,7 @@ export default async function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {events.map((event) => {
-              const eventImage = eventImageMap[event.title] || '/robot.jpeg'; // Fallback image
+              const eventImage = event.image || '/robot.jpeg'; // Use event.image from DB, fallback to generic
               return (
                 <div key={event.id} className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden group transition-all hover:shadow-xl hover:-translate-y-2">
                   <div className="relative aspect-video">

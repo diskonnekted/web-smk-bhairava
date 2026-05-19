@@ -9,20 +9,29 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden">
+      <Image 
+        src="/gedung.jpeg" 
+        alt="Background Gedung Sekolah" 
+        fill 
+        className="object-cover brightness-75" 
+        sizes="100vw"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="max-w-md w-full relative z-10">
         {/* Logo Section */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-3 mb-6 group no-underline">
             <div className="p-3 bg-white rounded-2xl shadow-xl group-hover:scale-110 transition-transform">
               <Image src="/logo-smk-bhairava.png" alt="Logo" width={40} height={40} />
             </div>
-            <span className="text-3xl font-black text-slate-900 tracking-tighter">
+            <span className="text-3xl font-black text-white tracking-tighter">
               SMK<span className="text-blue-600">BHAIRAVA</span>
             </span>
           </Link>
-          <h1 className="text-2xl font-black text-slate-800">Control Center Login</h1>
-          <p className="text-slate-500 font-medium">Masuk untuk mengelola sistem sekolah</p>
+          <h1 className="text-2xl font-black text-white">Control Center Login</h1>
+          <p className="text-slate-300 font-medium">Masuk untuk mengelola sistem sekolah</p>
         </div>
 
         {/* Login Card */}
@@ -78,12 +87,7 @@ export default function LoginPage() {
             </button>
           </form>
         </div>
-        
-        <div className="text-center mt-8">
-           <p className="text-slate-400 text-xs font-bold italic">
-             Jika tombol tidak bereaksi, silakan tekan Ctrl+F5 untuk membersihkan cache browser Anda.
-           </p>
-        </div>
+
       </div>
     </div>
   );
