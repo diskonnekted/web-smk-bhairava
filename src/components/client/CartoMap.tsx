@@ -1,24 +1,33 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import type * as L from 'leaflet'; // Import Leaflet types
-import 'leaflet'; // Import Leaflet for runtime effects
+import type * as L from 'leaflet';
 
 export default function CartoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
-  const [markerInstance, setMarkerInstance] = useState<L.Marker | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mapRef.current) return;
 
-    let currentMap: L.Map | null = null;
+    // Load Leaflet dynamically
+    import('leaflet').then((Leaflet) => {
+      if (!mapRef.current) return;
 
-    const initMap = () => {
-      const Leaflet = window.L; // Now type-safe
-      if (!Leaflet || !mapRef.current || currentMap) return;
+      // Ensure CSS is loaded
+      if (!document.getElementById('leaflet-css')) {
+        const link = document.createElement('link');
+        link.id = 'leaflet-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+      }
 
-      currentMap = Leaflet.map(mapRef.current, { zoomControl: false, scrollWheelZoom: false }).setView([-6.2615, 106.8106], 14);
+      const currentMap = Leaflet.map(mapRef.current, { 
+        zoomControl: false, 
+        scrollWheelZoom: false 
+      }).setView([-6.2615, 106.8106], 14);
+      
       setMapInstance(currentMap);
 
       Leaflet.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -35,42 +44,23 @@ export default function CartoMap() {
         popupAnchor: [0, -32]
       });
 
-      const newMarker = Leaflet.marker([-6.2615, 106.8106], { icon: markerIcon })
+      Leaflet.marker([-6.2615, 106.8106], { icon: markerIcon })
         .addTo(currentMap)
         .bindPopup('<div class="text-center p-1"><b class="text-slate-900 font-black text-sm uppercase tracking-widest">SMK Bhairava</b><br><span class="text-slate-500 text-xs font-bold mt-1 block">Pusat Inovasi Teknologi<br/>Jakarta Selatan</span></div>', {
             closeButton: false,
             className: 'custom-popup'
         })
         .openPopup();
-      setMarkerInstance(newMarker);
         
       Leaflet.control.zoom({ position: 'bottomright' }).addTo(currentMap);
-    };
-
-    if (!window.L) { // Now type-safe
-      if (!document.getElementById('leaflet-css')) {
-        const link = document.createElement('link');
-        link.id = 'leaflet-css';
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.onload = initMap;
-      document.head.appendChild(script);
-    } else {
-      initMap();
-    }
+    });
 
     return () => {
       if (mapInstance) {
         mapInstance.remove();
-        setMapInstance(null);
       }
     };
-  }, [mapInstance]); // Depend on mapInstance to ensure cleanup is associated with the correct instance
+  }, []); 
 
   return (
     <div className="w-full h-full relative z-0">

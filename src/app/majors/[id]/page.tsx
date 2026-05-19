@@ -1,264 +1,266 @@
 import React from 'react';
-import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/Navbar';
-import {
-  Network,
-  Calculator,
-  Megaphone,
-  Brain,
-  Database,
-  GraduationCap,
-  ArrowRight,
-  CheckCircle2,
-  Cpu,
-  Code,
-  Globe,
-  Award,
-  BookOpen
-} from 'lucide-react';
+import PageHero from '@/components/PageHero';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-
-const iconMap: Record<string, any> = {
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  Code, 
+  Cpu, 
+  Database, 
+  Layout, 
+  ShieldCheck, 
+  Briefcase, 
   Network,
-  Calculator,
-  Megaphone,
-  Brain,
-  Database,
-  Code,
-  Cpu,
-};
-
-// Map major names to specific logos
-const majorLogoMap: Record<string, string> = {
-  'Teknik Jaringan Komputer dan Telekomunikasi': '/jurusan tjkt.JPG',
-  'Pengembangan Perangkat Lunak dan GIM': '/jurusan pplg.JPG',
-  'Teknik Mekatronika & Robotika': '/jurusan mekatronika.JPG',
-  // Fallbacks for majors without a specific logo
-  'Akuntansi & Keuangan Lembaga': '/akunting.jpeg',
-  'AI & Machine Learning': '/robotic3.jpeg',
-  'Big Data Analytics': '/programming 2.jpeg',
-};
-
-// Map major names to a gallery of relevant images
-const majorGalleryMap: Record<string, string[]> = {
-  'Teknik Jaringan Komputer dan Telekomunikasi': ['/merakit pc.jpeg', '/merakiot pc.jpeg'],
-  'Pengembangan Perangkat Lunak dan GIM': ['/programming.jpeg', '/programming 2.jpeg'],
-  'Teknik Mekatronika & Robotika': ['/robotic.jpeg', '/making robot.jpeg'],
-  'AI & Machine Learning': ['/robotic3.jpeg', '/prakrtik industri it.jpeg'],
-  'Big Data Analytics': ['/programming 2.jpeg', '/merakiot pc.jpeg'],
-  'Akuntansi & Keuangan Lembaga': ['/akunting.jpeg', '/praktik kerja.jpeg'],
-};
-
-async function getMajorData(id: string) {
-  const major = await prisma.major.findUnique({
-    where: { id },
-    include: {
-      projects: true,
-      curriculums: {
-        orderBy: { version: 'desc' },
-        take: 1
-      }
-    }
-  });
-  return major;
-}
+  Zap,
+  Star,
+  Monitor,
+  Settings,
+  Power,
+  Terminal,
+  Award
+} from 'lucide-react';
 
 export default async function MajorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const major = await getMajorData(id);
+  
+  // Mapping hash ID ke slug nama agar URL tetap bisa diakses meskipun via ID
+  const hashToSlug: Record<string, string> = {
+    'cmpako90d000av6p84stmo94g': 'teknik-jaringan-komputer-dan-telekomunikasi',
+    'cmpako90d000bv6p8nzy0lxqe': 'akuntansi-dan-keuangan-lembaga',
+    'cmpako90d000cv6p8vnb4x8x7': 'pengembangan-perangkat-lunak-dan-gim',
+    'cmpako90d000dv6p8so4l2akg': 'teknik-mekatronika-dan-robotika',
+    'cmpako90d000ev6p8g8rfnb68': 'ai-dan-machine-learning',
+    'cmpako90d000fv6p8shs0ef3n': 'big-data-analytics'
+  };
 
-  if (!major) {
-    notFound();
-  }
+  const lookupId = hashToSlug[id] || id;
 
-  const Icon = iconMap[major.icon] || GraduationCap;
-  const majorImage = majorLogoMap[major.name] || '/robot.jpeg'; // Use the new logo map
-  const isLogo = majorImage.endsWith('.JPG'); // Check if the image is a logo
-  const galleryImages = majorGalleryMap[major.name] || ['/profil siswa.jpeg', '/praktik industri.jpeg'];
+  const major = await prisma.major.findFirst({
+    where: {
+      OR: [
+        { id: id },
+        { name: lookupId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }
+      ]
+    }
+  });
+
+  const majorName = major ? major.name : lookupId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+  const portfolioData: Record<string, typeof portfolioItems> = {
+    'Teknik Jaringan Komputer dan Telekomunikasi': [
+      { title: 'Infrastruktur Fiber Optic', img: '/programming 2.jpeg', author: 'Team TJKT' },
+      { title: 'Server Security Audit', img: '/robot.jpeg', author: 'Siswa TJKT' },
+      { title: 'Smart Gateway Node', img: '/ujian kompetensi.jpeg', author: 'Team TJKT' }
+    ],
+    'Akuntansi dan Keuangan Lembaga': [
+      { title: 'Simulasi Audit Pajak', img: '/akunting.jpeg', author: 'Team Akuntansi' },
+      { title: 'Laporan Keuangan Tahunan', img: '/profil siswa.jpeg', author: 'Siswa Akuntansi' },
+      { title: 'Dashboard Keuangan Digital', img: '/programming.jpeg', author: 'Team Akuntansi' }
+    ],
+    'Pengembangan Perangkat Lunak dan Gim': [
+       { title: 'Web Marketplace App', img: '/programming.jpeg', author: 'Dev Team' },
+       { title: 'Game Development 2D', img: '/robot.jpeg', author: 'Gim Dev' },
+       { title: 'Sistem Ujian Cloud', img: '/ujian kompetensi.jpeg', author: 'Team PPLG' }
+    ],
+    'AI dan Machine Learning': [
+        { title: 'Predictive Analysis Model', img: '/programming 2.jpeg', author: 'AI Research' },
+        { title: 'Computer Vision System', img: '/robot.jpeg', author: 'AI Lab' },
+        { title: 'Neural Network Optimizer', img: '/ujian kompetensi.jpeg', author: 'AI Research' }
+    ]
+  };
+  
+  const portfolioItems = portfolioData[majorName] || [
+      { title: 'Project Karya Umum', img: '/programming 2.jpeg', author: 'Siswa SMK' },
+      { title: 'Project Karya Umum', img: '/robot.jpeg', author: 'Siswa SMK' },
+      { title: 'Project Karya Umum', img: '/ujian kompetensi.jpeg', author: 'Siswa SMK' }
+  ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-40 pb-20 px-6 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-12 items-center">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-[10px] font-black uppercas
-e tracking-widest mb-6">
-                <Icon size={14} />
-                <span>Program Keahlian {major.category}</span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-black text-slate-900 leading-[1.1] mb-8">
-                {major.name}
-              </h1>
-              <p className="text-xl text-slate-500 mb-10 leading-relaxed">
-                {major.description}
+      <PageHero 
+        title={`${majorName} <br />(Pro Version)`}
+        subtitle={`Pelajari keunggulan kurikulum ${majorName} yang dirancang khusus untuk industri teknologi terkini.`}
+        bgImage="/programming.jpeg"
+        badge="Pro Version - Advanced Lab"
+        priority
+      />
+
+      {/* Detail Content */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Main Info */}
+          <div className="lg:col-span-2 space-y-12">
+            <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100">
+              <h2 className="text-3xl font-black text-slate-900 mb-6">Tentang Program</h2>
+              <p className="text-slate-600 leading-relaxed text-lg mb-8">
+                Jurusan {majorName} di SMK Bhairava menyediakan akses ke lab virtual, simulasi industri, dan proyek kolaborasi langsung dengan mitra teknologi. Kurikulum Pro Version mencakup materi tingkat lanjut yang biasanya hanya tersedia di tingkat universitas atau training industri bersertifikat.
               </p>
               <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all flex items-center
- gap-2">
-                  Daftar Sekarang
-                  <ArrowRight size={18} />
-                </button>
-                {major.curriculums[0] && (
-                  <button className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-2xl font-black hover:border-blue-600
- transition-all">
-                    Download Kurikulum
-                  </button>
-                )}
+                 <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100">
+                    <Star className="text-amber-500 mb-2" size={24} />
+                    <p className="font-black text-slate-900">Sertifikasi Industri</p>
+                 </div>
+                 <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <Zap className="text-blue-500 mb-2" size={24} />
+                    <p className="font-black text-slate-900">Kurikulum 4.0</p>
+                 </div>
               </div>
             </div>
-            <div className="w-full md:w-2/5 aspect-square relative flex items-center justify-center">
-              <Image
-                src={majorImage}
-                alt={major.name}
-                fill
-                className={isLogo ? "object-contain p-8" : "object-cover rounded-[3rem] group-hover:scale-110 transition-transform duration-1000"}     
-              />
-              {!isLogo && (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent rounded-[3rem]" />
-                  <div className="absolute bottom-8 left-8">
-                    <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white">
-                      <Icon size={32} />
+
+            <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100">
+               <h2 className="text-3xl font-black text-slate-900 mb-8">Proyek Unggulan (Pro Version)</h2>
+               <div className="grid md:grid-cols-2 gap-6">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="rounded-3xl overflow-hidden border border-slate-200 group">
+                      <div className="aspect-video bg-slate-200 relative">
+                        <Image src={i === 1 ? "/making robot.jpeg" : "/merakit pc.jpeg"} alt="Proyek" fill sizes="40vw" className="object-cover" />
+                      </div>
+                      <div className="p-6">
+                         <h4 className="font-bold text-lg mb-2">Sistem Integrasi IoT {i}</h4>
+                         <p className="text-slate-500 text-sm">Implementasi perangkat lunak pada perangkat keras industri.</p>
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  ))}
+               </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-8">
+            <div className="bg-slate-900 text-white p-10 rounded-[3rem] shadow-xl">
+               <h3 className="text-xl font-black mb-6">Pro Version Perks</h3>
+               <ul className="space-y-4">
+                  <li className="flex items-center gap-3 text-slate-300 font-bold"><ShieldCheck size={20} className="text-blue-400" /> Akses Lab 24/7</li>
+                  <li className="flex items-center gap-3 text-slate-300 font-bold"><Briefcase size={20} className="text-blue-400" /> Magang Prioritas</li>
+                  <li className="flex items-center gap-3 text-slate-300 font-bold"><Network size={20} className="text-blue-400" /> Jaringan Mentoring</li>
+               </ul>
+               <button className="w-full mt-8 bg-blue-600 text-white py-4 rounded-2xl font-black hover:bg-blue-700">Daftar Pro Version</button>
+            </div>
+            
+            <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 text-center">
+               <h3 className="text-xl font-black text-slate-900 mb-4">Virtual Lab</h3>
+               <p className="text-slate-500 text-sm mb-6">Masuk ke ruang praktikum simulasi digital jurusan ini.</p>
+               <Link href={`/majors/${id}/lab`} className="block w-full bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-slate-800 transition-all text-center">
+                 Masuk Virtual Lab
+               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Lab & Industry Focus */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-12">
-          <div className="p-10 rounded-[3rem] bg-slate-900 text-white relative overflow-hidden group">
-            <Cpu className="text-blue-400 mb-6 group-hover:scale-110 transition-transform" size={40} />
-            <h3 className="text-2xl font-black mb-4">Virtual Lab & Simulation</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-8">
-              Akses ke simulator industri standar internasional seperti Cisco Packet Tracer, Myob Digital, dan Cloud Sandbox.
-            </p>
-            <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-widest">
-              Akses Siswa
-              <ArrowRight size={14} />
-            </div>
-            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl"></div>
-          </div>
-
-          <div className="p-10 rounded-[3rem] border border-slate-100 shadow-sm group">
-            <Globe className="text-emerald-500 mb-6 group-hover:rotate-12 transition-transform" size={40} />
-            <h3 className="text-2xl font-black text-slate-900 mb-4">Sertifikasi Global</h3>
-            <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              Kurikulum terintegrasi dengan vendor raksasa teknologi (Google, AWS, Microsoft, Cisco) untuk menjamin kualitas lulusan.        
-            </p>
-            <div className="space-y-3">
-              {['BNSP Certified', 'Vendor Recognized', 'Industry Aligned'].map(item => (
-                <div key={item} className="flex items-center gap-2 text-slate-700 font-bold text-xs">
-                  <CheckCircle2 size={16} className="text-emerald-500" />
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-10 rounded-[3rem] border border-slate-100 shadow-sm group">
-            <Award className="text-amber-500 mb-6 group-hover:scale-110 transition-transform" size={40} />
-            <h3 className="text-2xl font-black text-slate-900 mb-4">Proyek Unggulan</h3>
-            <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              Siswa mengerjakan proyek nyata dari mitra industri sebagai portofolio sebelum lulus.
-            </p>
-            <div className="space-y-4">
-              {major.projects.map(project => (
-                <div key={project.id} className="p-4 bg-slate-50 rounded-2xl flex items-center justify-between">
-                  <span className="font-bold text-slate-700 text-xs">{project.title}</span>
-                  <ArrowRight size={14} className="text-slate-300" />
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Portfolio Section */}
+      <section className="pb-24 px-6 max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-12">
+           <div>
+              <h2 className="text-4xl font-black text-slate-900 mb-4">Portofolio Siswa</h2>
+              <p className="text-slate-500 font-bold">Kumpulan karya terbaik dan inovasi dari siswa jurusan {majorName}.</p>
+           </div>
+           <Link href="#" className="text-blue-600 font-black text-sm uppercase tracking-widest hover:text-blue-800 transition-colors">Lihat Semua Karya</Link>
         </div>
-      </section>
-
-      {/* Showcase Section - NEW Images integration */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            {galleryImages.map((src, index) => (
-              <div key={index} className="relative aspect-video rounded-[3rem] overflow-hidden shadow-lg group">
-                <Image
-                  src={src}
-                  alt={`${major.name} gallery image ${index + 1}`}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+        
+        <div className="grid md:grid-cols-3 gap-8">
+           {portfolioItems.map((item, i) => (
+              <div key={i} className="group cursor-pointer">
+                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-xl">
+                    <Image src={item.img} alt={item.title} fill sizes="(max-width: 768px) 100vw, 30vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                 </div>
+                 <h4 className="font-black text-slate-900 text-lg mb-1">{item.title}</h4>
+                 <p className="text-slate-500 font-bold text-sm">Oleh {item.author}</p>
               </div>
-            ))}
-          </div>
+           ))}
         </div>
       </section>
 
-      {/* Curriculum Overview */}
-      <section className="py-24 px-6 bg-slate-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-black text-slate-900 mb-6">Peta Kompetensi</h2>
-          <p className="text-slate-500 mb-12">
-            Kami merancang kurikulum yang adaptif terhadap kebutuhan industri 4.0, fokus pada keterampilan teknis dan soft-skills.
-          </p>
-          <div className="grid md:grid-cols-2 gap-6 text-left">
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm">
-              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
-                <BookOpen size={24} />
-              </div>
-              <h4 className="text-lg font-black text-slate-800 mb-4">Materi Inti</h4>
-              <ul className="space-y-3 text-sm text-slate-500 font-medium">
-                <li>• Dasar-dasar Kejuruan</li>
-                <li>• Praktik Kerja Lapangan</li>
-                <li>• Proyek Penguatan Profil Pelajar Pancasila</li>
+      {/* Detailed Info Section */}
+      <section className="pb-24 px-6 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8">
+           {/* Kurikulum */}
+           <div className="bg-slate-900 p-8 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-white relative z-10"><Layout size={20} className="text-blue-400"/> Kurikulum</h3>
+              <ul className="space-y-4 text-sm font-bold text-slate-300 relative z-10">
+                 <li className="flex gap-2"><span>•</span> Dasar-dasar Teknik Modern</li>
+                 <li className="flex gap-2"><span>•</span> Sertifikasi Industri Internasional</li>
+                 <li className="flex gap-2"><span>•</span> Proyek Berbasis Industri (PBL)</li>
+                 <li className="flex gap-2"><span>•</span> Magang Prakerin 6 Bulan</li>
               </ul>
-            </div>
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm">
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-6">
-                <Brain size={24} />
+           </div>
+           {/* Kerjasama */}
+           <div className="bg-slate-900 p-8 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-white relative z-10"><Briefcase size={20} className="text-emerald-400"/> Kerjasama</h3>
+              <div className="flex flex-wrap gap-2 relative z-10">
+                 <span className="bg-white/5 px-3 py-1 rounded-lg text-xs font-black text-white hover:bg-white/10 transition-colors">AWS Academy</span>
+                 <span className="bg-white/5 px-3 py-1 rounded-lg text-xs font-black text-white hover:bg-white/10 transition-colors">Cisco</span>
+                 <span className="bg-white/5 px-3 py-1 rounded-lg text-xs font-black text-white hover:bg-white/10 transition-colors">Google Cloud</span>
+                 <span className="bg-white/5 px-3 py-1 rounded-lg text-xs font-black text-white hover:bg-white/10 transition-colors">Microsoft</span>
               </div>
-              <h4 className="text-lg font-black text-slate-800 mb-4">Keahlian Khusus</h4>
-              <ul className="space-y-3 text-sm text-slate-500 font-medium">
-                <li>• Konsentrasi Keahlian {major.name}</li>
-                <li>• Mata Pelajaran Pilihan Industri</li>
-                <li>• Sertifikasi Kompetensi</li>
-              </ul>
+           </div>
+           {/* Prestasi */}
+           <div className="bg-slate-900 p-8 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-amber-500/50 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-white relative z-10"><Award size={20} className="text-amber-400"/> Prestasi</h3>
+              <p className="text-sm font-bold text-slate-300 mb-2 relative z-10">Juara 1 Lomba Inovasi Nasional 2025</p>
+              <p className="text-sm font-bold text-slate-300 relative z-10">Finalis WorldSkills Junior 2024</p>
+           </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white pt-32 pb-12 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 mb-24">
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-4 mb-8">
+              <Image src="/logo-smk-bhairava.png" alt="Logo" width={60} height={60} className="rounded-2xl brightness-110 shadow-2xl" />
+              <h2 className="text-4xl font-black tracking-tighter">SMK<span className="text-blue-400 italic">BHAIRAVA</span></h2>
+            </div>
+            <p className="text-slate-400 text-lg leading-relaxed max-w-md mb-10">
+              Transformasi pendidikan vokasi melalui teknologi cerdas dan kolaborasi industri global.
+            </p>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><ShieldCheck size={20} /></div>
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><Briefcase size={20} /></div>
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><Network size={20} /></div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-32 px-6">
-        <div className="max-w-5xl mx-auto bg-blue-600 rounded-[4rem] p-16 text-center text-white relative overflow-hidden">
-          <h2 className="text-4xl md:text-5xl font-black mb-8 relative z-10">Siap Menjadi Tenaga <br />Profesional Masa Depan?</h2>
-          <p className="text-blue-100 text-lg mb-12 max-w-2xl mx-auto relative z-10">
-            Bergabunglah dengan ratusan alumni yang telah sukses berkarir di perusahaan teknologi ternama dan industri global.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-            <button className="bg-white text-blue-600 px-10 py-5 rounded-[2rem] font-black text-lg hover:shadow-2xl transition-all">
-              Hubungi Konselor
-            </button>
-            <button className="bg-blue-700 text-white px-10 py-5 rounded-[2rem] font-black text-lg hover:bg-blue-800 transition-all">
-              Unduh Brosur
-            </button>
+          <div className="lg:col-span-2">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Portal</h4>
+            <ul className="space-y-4 font-bold text-slate-400">
+              <li><Link href="/admin" className="hover:text-white transition-colors">Portal Admin</Link></li>
+              <li><Link href="/portal/guru" className="hover:text-white transition-colors">Portal Guru</Link></li>
+              <li><Link href="/portal/wali" className="hover:text-white transition-colors">Portal Wali Siswa</Link></li>
+              <li><Link href="/portal/siswa" className="hover:text-white transition-colors">Portal Siswa</Link></li>
+            </ul>
           </div>
-          {/* Decorative pattern */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full -ml-20 -mb-20 blur-3xl"></div>
+          <div className="lg:col-span-2">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Resources</h4>
+            <ul className="space-y-4 font-bold text-slate-400">
+              <li className="hover:text-white cursor-pointer transition-colors">Digital Library</li>
+              <li className="hover:text-white cursor-pointer transition-colors">LMS Login</li>
+              <li className="hover:text-white cursor-pointer transition-colors">PKL Portal</li>
+              <li className="hover:text-white cursor-pointer transition-colors">Career Hub</li>
+            </ul>
+          </div>
+          <div className="lg:col-span-3">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Visit Us</h4>
+            <p className="text-slate-400 font-bold leading-relaxed mb-6">
+              Jl. Teknologi Masa Depan No. 404<br />
+              Jakarta Selatan, Indonesia
+            </p>
+            <p className="text-blue-400 font-black">info@bhairava.sch.id</p>
+          </div>
         </div>
-      </section>
-
-      {/* Simple Footer */}
-      <footer className="py-12 border-t border-slate-100 text-center">
-        <p className="text-slate-400 text-xs font-black uppercase tracking-widest">© 2026 SMK BHAIRAVA. Industry Ready Education.</p>
+        <div className="max-w-7xl mx-auto border-t border-white/5 pt-12 flex flex-col md:row justify-between items-center gap-6">
+          <p className="text-slate-600 text-xs font-black uppercase tracking-widest">© 2026 SMK BHAIRAVA. All rights reserved.</p>
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <span className="hover:text-slate-400 cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-slate-400 cursor-pointer">Terms of Service</span>
+          </div>
+        </div>
       </footer>
     </div>
   );

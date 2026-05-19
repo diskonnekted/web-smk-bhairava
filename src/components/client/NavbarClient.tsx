@@ -11,6 +11,11 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Fungsi untuk menghasilkan slug
+const generateSlug = (name: string) => {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+};
+
 const iconMap: Record<string, LucideIcon> = {
   Network,
   Calculator,
@@ -68,7 +73,7 @@ export default function Navbar({ majors }: { majors: MajorItem[] }) {
                 {majors.map((major) => (
                   <Link 
                     key={major.id}
-                    href={`/majors/${major.id}`}
+                    href={`/majors/${generateSlug(major.name)}`}
                     className="flex items-center gap-4 p-4 rounded-2xl hover:bg-blue-50 transition-all group/item no-underline text-slate-700 hover:text-blue-600"
                     onClick={(e) => {
                        const details = e.currentTarget.closest('details');

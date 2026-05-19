@@ -89,6 +89,8 @@ export default async function LandingPage() {
                 src="/robot.jpeg" 
                 alt="Modern Education"
                 fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover opacity-70 group-hover:scale-105 transition-transform duration-1000" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
@@ -114,10 +116,10 @@ export default async function LandingPage() {
             <div className="relative order-2 lg:order-1">
                <div className="grid grid-cols-2 gap-4">
                   <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border-2 border-slate-800">
-                     <Image src="/excavator.jpeg" alt="Heavy Machinery" fill className="object-cover" />
+                     <Image src="/excavator.jpeg" alt="Heavy Machinery" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                   </div>
                   <div className="relative aspect-[4/5] rounded-3xl overflow-hidden mt-12 border-2 border-slate-800">
-                     <Image src="/excavator2.jpeg" alt="Modern Agriculture" fill className="object-cover" />
+                     <Image src="/excavator2.jpeg" alt="Modern Agriculture" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                   </div>
                </div>
                {/* Floating badge */}
@@ -166,6 +168,7 @@ export default async function LandingPage() {
                 src="/making robot.jpeg" 
                 alt="Making Robot"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-110 transition-all duration-700" 
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-8">
@@ -173,17 +176,17 @@ export default async function LandingPage() {
               </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group col-span-2 shadow-lg">
-              <Image src="/merakit pc.jpeg" alt="Merakit PC" fill className="object-cover group-hover:scale-110 transition-all duration-700" />
+              <Image src="/merakit pc.jpeg" alt="Merakit PC" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-end p-6">
                 <p className="text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">Hardware Engineering</p>
               </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group shadow-md">
-              <Image src="/programming.jpeg" alt="Programming" fill className="object-cover group-hover:scale-110 transition-all duration-700" />
+              <Image src="/programming.jpeg" alt="Programming" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
             </div>
             <div className="relative rounded-3xl overflow-hidden group shadow-md">
-              <Image src="/profil siswa.jpeg" alt="Profil Siswa" fill className="object-cover group-hover:scale-110 transition-all duration-700" />
+              <Image src="/profil siswa.jpeg" alt="Profil Siswa" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-all duration-700" />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
             </div>
           </div>
@@ -213,7 +216,7 @@ export default async function LandingPage() {
            <div className="grid lg:grid-cols-2 gap-8">
               <div className="bg-slate-50 rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 items-center border border-slate-100 group hover:shadow-2xl transition-all duration-500">
                  <div className="w-full md:w-1/2 aspect-square relative rounded-[2rem] overflow-hidden shadow-lg">
-                    <Image src="/prakrtik industri it.jpeg" alt="Success Story 1" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/prakrtik industri it.jpeg" alt="Success Story 1" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
                  </div>
                  <div className="flex-1">
                     <div className="flex gap-1 text-amber-400 mb-4">
@@ -233,7 +236,7 @@ export default async function LandingPage() {
               </div>
               <div className="bg-slate-50 rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 items-center border border-slate-100 group hover:shadow-2xl transition-all duration-500">
                  <div className="w-full md:w-1/2 aspect-square relative rounded-[2rem] overflow-hidden shadow-lg">
-                    <Image src="/praktik kerja.jpeg" alt="Success Story 2" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/praktik kerja.jpeg" alt="Success Story 2" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-110 transition-transform duration-700" />
                  </div>
                  <div className="flex-1">
                     <div className="flex gap-1 text-amber-400 mb-4">
@@ -283,9 +286,10 @@ export default async function LandingPage() {
             <div className="lg:col-span-3 grid md:grid-cols-3 gap-6">
               {majors.map((major) => {
                 const Icon = iconMap[major.icon] || GraduationCap;
+                const slug = major.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                 return (
                   <Link 
-                    href={`/majors/${major.id}`}
+                    href={`/majors/${slug}`}
                     key={major.id} 
                     className="bg-slate-50 p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 group text-left"
                   >
@@ -332,6 +336,7 @@ export default async function LandingPage() {
                       src={eventImage} 
                       alt={event.title} 
                       fill 
+                      sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                   </div>

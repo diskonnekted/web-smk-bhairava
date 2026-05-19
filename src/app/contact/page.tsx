@@ -1,13 +1,25 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import { Mail, Phone, MapPin, Send, MessageCircle, Share2, Globe } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import CartoMap from '@/components/client/CartoMap';
+import { Mail, Phone, MapPin, Send, MessageCircle, Share2, Globe, ShieldCheck, Briefcase, Network } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="pt-40 pb-24 px-6">
+      <PageHero 
+        title="Mari Bicara <br />Masa Depan" 
+        subtitle="Punya pertanyaan tentang pendaftaran atau ingin bekerjasama dengan kami? Jangan ragu untuk menghubungi tim kami." 
+        bgImage="/desainer.jpeg" 
+        badge="Hubungi Kami"
+        priority 
+      />
+
+      <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20 items-start">
             <div>
@@ -93,15 +105,66 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map placeholder */}
-      <section className="h-[400px] bg-slate-200 grayscale opacity-60">
-        <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold">
-          [ Interactive Map Placeholder ]
-        </div>
+      {/* Map */}
+      <section className="h-[400px] w-full overflow-hidden">
+        <CartoMap />
       </section>
 
-      <footer className="bg-slate-900 text-white py-12 px-6 text-center">
-        <p className="text-slate-500 text-sm">© 2026 SMK BHAIRAVA. All rights reserved.</p>
+      {/* Footer - Consistent Brand */}
+      <footer className="bg-slate-900 text-white pt-32 pb-12 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 mb-24">
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-4 mb-8">
+              <Image src="/logo-smk-bhairava.png" alt="Logo" width={60} height={60} className="rounded-2xl brightness-110 shadow-2xl" />
+              <h2 className="text-4xl font-black tracking-tighter">SMK<span className="text-blue-400 italic">BHAIRAVA</span></h2>
+            </div>
+            <p className="text-slate-400 text-lg leading-relaxed max-w-md mb-10">
+              Transformasi pendidikan vokasi melalui teknologi cerdas dan kolaborasi industri global.
+            </p>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><ShieldCheck size={20} /></div>
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><Briefcase size={20} /></div>
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all cursor-pointer"><Network size={20} /></div>
+            </div>
+          </div>
+          
+          <div className="lg:col-span-2">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Portal</h4>
+            <ul className="space-y-4 font-bold text-slate-400">
+              <li><Link href="/admin" className="hover:text-white transition-colors">Portal Admin</Link></li>
+              <li><Link href="/portal/guru" className="hover:text-white transition-colors">Portal Guru</Link></li>
+              <li><Link href="/portal/wali" className="hover:text-white transition-colors">Portal Wali Siswa</Link></li>
+              <li><Link href="/portal/siswa" className="hover:text-white transition-colors">Portal Siswa</Link></li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Resources</h4>
+            <ul className="space-y-4 font-bold text-slate-400">
+              <li className="hover:text-white cursor-pointer transition-colors">Digital Library</li>
+              <li className="hover:text-white cursor-pointer transition-colors">LMS Login</li>
+              <li className="hover:text-white cursor-pointer transition-colors">PKL Portal</li>
+              <li className="hover:text-white cursor-pointer transition-colors">Career Hub</li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-3">
+            <h4 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500 mb-8">Visit Us</h4>
+            <p className="text-slate-400 font-bold leading-relaxed mb-6">
+              Jl. Teknologi Masa Depan No. 404<br />
+              Jakarta Selatan, Indonesia
+            </p>
+            <p className="text-blue-400 font-black">info@bhairava.sch.id</p>
+          </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto border-t border-white/5 pt-12 flex flex-col md:row justify-between items-center gap-6">
+          <p className="text-slate-600 text-xs font-black uppercase tracking-widest">© 2026 SMK BHAIRAVA. All rights reserved.</p>
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <span className="hover:text-slate-400 cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-slate-400 cursor-pointer">Terms of Service</span>
+          </div>
+        </div>
       </footer>
     </div>
   );
