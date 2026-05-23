@@ -1,10 +1,10 @@
-import { streamText, StreamTextResult } from 'ai';
+import { streamText, tool, zodSchema, stepCountIs } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 // import { getSchoolContext } from '@/lib/ai-context'; // Removed import
-import { CoreMessage } from 'ai';
+import { ModelMessage } from 'ai';
 
 // Initialize the Groq client using @ai-sdk/openai
 const groq = createOpenAI({
@@ -25,9 +25,9 @@ export async function POST(req: Request) {
         // const schoolContext = await getSchoolContext(); // Removed call
         const staticSchoolContext = `SMK Bhairava adalah Sekolah Menengah Kejuruan di Indonesia dengan fokus pada teknologi dan bisnis.`; // Static placeholder
 
-        const result: StreamTextResult = await streamText({
+        const result = await streamText({
             model: groq('llama3-8b-8192'),
-            messages: messages as CoreMessage[],
+            messages: messages as ModelMessage[],
             system: `You are Bhairava AI, the official AI assistant for SMK Bhairava, a vocational high school in Indonesia.
 - Your tone is professional, helpful, and slightly enthusiastic.
 - Use the following school context as your primary source of truth:
@@ -40,10 +40,10 @@ ${staticSchoolContext}
 - All responses must be in Bahasa Indonesia.
 - Maintain a modern, digital-first attitude consistent with a tech-focused school.`,
             tools: {
-                get_school_info: {
+                get_school_info: tool({
                     description: "Get information about the school's majors, latest news, or upcoming events.",
-                    parameters: getSchoolInfoParams,
-                    execute: async ({ query_type, major_name }: GetSchoolInfoParams) => {
+                    inputSchema: zodSchema(getSchoolInfoParams),
+                    execute: async ({ query_type, major_name }) => {
                         let tool_response_content = "";
 
                         if (query_type === 'majors') {
@@ -69,18 +69,18 @@ ${staticSchoolContext}
                             const teachers = await prisma.teacher.findMany({ take: 5, select: { name: true, subjects: true } });
                             tool_response_content = `Some of our teachers: ${teachers.map(t => `${t.name} (teaches: ${t.subjects || 'General'})`).join(', ')}`;
                         } else if (query_type === 'projects') {
-                            const projects = await prisma.project.findMany({ take: 3, include: { major: true }, select: { title: true, major: { select: { name: true } } } });
+                            const projects = await prisma.project.findMany({ take: 3, select: { title: true, major: { select: { name: true } } } });
                             tool_response_content = `Recent student projects: ${projects.map(p => `${p.title} (${p.major.name})`).join(', ')}`;
                         }
 
                         return tool_response_content;
                     }
-                }
+                })
             },
-            maxSteps: 5,
+            stopWhen: stepCountIs(5),
         });
 
-        return result.toDataStreamResponse();
+        return result.toUIMessageStreamResponse();
 
     } catch (error: unknown) {
         console.error('Groq Chat API error:', error);

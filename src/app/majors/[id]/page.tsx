@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import PageHero from '@/components/PageHero';
 import Image from 'next/image';
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import { 
   ArrowRight, 
   Code, 
@@ -47,7 +48,7 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
 
   const majorName = major ? major.name : lookupId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
-  const portfolioData: Record<string, typeof portfolioItems> = {
+  const portfolioData: Record<string, Array<{ title: string; img: string; author: string }>> = {
     'Teknik Jaringan Komputer dan Telekomunikasi': [
       { title: 'Infrastruktur Fiber Optic', img: '/programming 2.jpeg', author: 'Team TJKT' },
       { title: 'Server Security Audit', img: '/robot.jpeg', author: 'Siswa TJKT' },

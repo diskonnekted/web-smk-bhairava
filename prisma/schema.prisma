@@ -30,8 +30,9 @@ model Teacher {
   user     User?     @relation(fields: [userId], references: [id])
   gender   String
   phone    String?
-  subjects String? // "Matematika,Fisika"
-  grades   Grade[]
+  subjects           String? // "Matematika,Fisika"
+  grades             Grade[]
+  counselingSessions CounselingSession[]
 }
 
 model Major {
@@ -58,10 +59,13 @@ model Student {
   address       String?
   majorId       String
   major         Major        @relation(fields: [majorId], references: [id])
-  internships   Internship[]
-  grades        Grade[]
-  userId        String?      @unique // Link to User model for login
-  user          User?        @relation(fields: [userId], references: [id])
+  internships        Internship[]
+  grades             Grade[]
+  attendance         Attendance[]
+  feePayments        FeePayment[]
+  counselingSessions CounselingSession[]
+  userId             String?      @unique // Link to User model for login
+  user               User?        @relation(fields: [userId], references: [id])
 }
 
 model Grade {
@@ -131,4 +135,38 @@ model Project {
   major       Major   @relation(fields: [majorId], references: [id])
   imageUrl    String?
   link        String?
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime
+  status    String   // HADIR, ALFA, IZIN, SAKIT
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model FeePayment {
+  id        String    @id @default(cuid())
+  studentId String
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount    Int
+  dueDate   DateTime
+  status    String    // PAID, PENDING
+  paidDate  DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model CounselingSession {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  date      DateTime
+  topic     String
+  status    String   // PENDING, APPROVED, COMPLETED
+  notes     String?
+  createdAt DateTime @default(now())
 }

@@ -2,7 +2,6 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { createAuditLog } from './audit'; // Assuming audit.ts needs to be recreated if not present
 import { getSession } from '@/lib/auth';
 
 export async function submitProject(formData: FormData) {

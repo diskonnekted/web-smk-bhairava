@@ -2,10 +2,11 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-interface AuthSession {
+type AuthSession = {
   userId: string;
   name: string;
   role: string;
+  username?: string;
   expires?: Date;
 }
 

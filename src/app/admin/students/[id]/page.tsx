@@ -19,7 +19,7 @@ async function getStudentData(id: string) {
 }
 
 // Find teacher record based on logged-in user's ID
-async function getTeacherFromSession(userId: string) {
+async function getTeacherFromSession(userId: string | undefined) {
   if (!userId) return null;
   return await prisma.teacher.findUnique({ where: { userId }});
 }
